@@ -1,10 +1,12 @@
-from sentence_transformers import SentenceTransformer
-model = SentenceTransformer("all-MiniLM-L6-v2")
-def get_embedding(text):
-    embedding = model.encode(text)
-    return embedding.tolist()
+import os
+from dotenv import load_dotenv
+from huggingface_hub import InferenceClient
 
-if __name__ == "__main__":
-    result = get_embedding("Hello world")
-    print(result)
-    print(len(result))
+load_dotenv()
+
+HF_TOKEN = os.getenv("HF_TOKEN")
+client = InferenceClient(token=HF_TOKEN)
+
+def get_embedding(text):
+    result = client.feature_extraction(text, model="sentence-transformers/all-MiniLM-L6-v2")
+    return result.tolist()
